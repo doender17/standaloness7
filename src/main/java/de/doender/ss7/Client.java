@@ -557,8 +557,8 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
             System.out.println(client.clientM3UAMgmt.getAppServers().get(0).getName());
             System.out.println(client.clientM3UAMgmt.getAppServers().get(0).isConnected());
             System.out.println(client.clientM3UAMgmt.getAppServers().get(0).isUp());
-            Thread.sleep(10000);
-            //client.initiateUSSD();
+            Thread.sleep(20000);
+            client.initiateUSSD();
 
         }
         catch (java.lang.Exception ex) {

@@ -551,6 +551,9 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
         try {
             server.initializeStack(channelType);
+            Thread.sleep(10000);
+            server.serverM3UAMgmt.start();
+            server.serverM3UAMgmt.startAsp("RASP1");
 
             // Lets pause for 20 seconds so stacks are initialized properly
             // Thread.sleep(10000);
