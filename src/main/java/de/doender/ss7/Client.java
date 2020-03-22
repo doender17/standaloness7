@@ -439,7 +439,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 
         try {
             CBSDataCodingSchemeImpl cbsDataCodingScheme = new CBSDataCodingSchemeImpl(0x0f);
-
+    
             USSDString ussdString = this.mapProvider.getMAPParameterFactory().createUSSDString("1", cbsDataCodingScheme, null);
 
             AddressString msisdn = this.mapProvider.getMAPParameterFactory().createAddressString(

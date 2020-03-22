@@ -372,7 +372,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
     public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
 
         long invokeId = procUnstrReqInd.getInvokeId();
-        
+
         CBSDataCodingSchemeImpl cbsDataCodingScheme = new CBSDataCodingSchemeImpl(0x0f);
 
         MAPDialogSupplementary dialog = procUnstrReqInd.getMAPDialog();
