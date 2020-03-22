@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module org.jetbrains.idea.maven.project.MavenProjectsManager.isMavenModule="true" type="JAVA_MODULE" version="4">
+  <component name="NewModuleRootManager" LANGUAGE_LEVEL="JDK_1_8">
+    <output url="file://$MODULE_DIR$/target/classes" />
+    <output-test url="file://$MODULE_DIR$/target/test-classes" />
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/src/main/java" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/src/test/java" isTestSource="true" />
+      <excludeFolder url="file://$MODULE_DIR$/target" />
+    </content>
+    <orderEntry type="inheritedJdk" />
+    <orderEntry type="sourceFolder" forTests="false" />
+    <orderEntry type="library" scope="TEST" name="Maven: junit:junit:3.8.1" level="project" />
+    <orderEntry type="library" name="Maven: org.mobicents.protocols.sctp:sctp-api:1.0.0.CR3" level="project" />
+    <orderEntry type="library" name="Maven: log4j:log4j:1.2.8" level="project" />
+    <orderEntry type="library" name="Maven: org.mobicents.commons:commons:1.0.0.CR1" level="project" />
+    <orderEntry type="library" name="Maven: javolution:javolution:5.5.1" level="project" />
+    <orderEntry type="library" name="Maven: org.mobicents.protocols.sctp:sctp-impl:1.0.0.CR3" level="project" />
+    <orderEntry type="library" name="Maven: org.testng:testng:6.2" level="project" />
+    <orderEntry type="library" name="Maven: org.beanshell:bsh:2.0b4" level="project" />
+    <orderEntry type="library" name="Maven: com.beust:jcommander:1.12" level="project" />
+    <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.6" level="project" />
+    <orderEntry type="library" name="Maven: org.restcomm.protocols.ss7.m3ua:m3ua-api:8.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.restcomm.protocols.ss7.mtp:mtp-api:8.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.mobicents.protocols.stream:stream:1.0.0.CR1" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-all:4.0.33.Final" level="project" />
+    <orderEntry type="library" name="Maven: org.restcomm.protocols.ss7.statistics:statistics-api:8.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.restcomm.protocols.ss7.m3ua:m3ua-impl:8.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.restcomm.protocols.ss7.management:shell-server-api:8.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.restcomm.protocols.ss7.mtp:mtp:8.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.apache.commons:commons-email:1.3.2" level="project" />
+    <orderEntry type="library" name="Maven: javax.mail:mail:1.4.5" level="project" />
+    <orderEntry type="library" name="Maven: javax.activation:activation:1.1.1" level="project" />
+    <orderEntry type="library" name="Maven: org.restcomm.protocols.ss7.scheduler:scheduler:8.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.restcomm.protocols.ss7.congestion:congestion:8.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.restcomm.protocols.ss7.statistics:statistics-impl:8.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.restcomm.protocols.ss7.sccp:sccp-api:8.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.restcomm.protocols.ss7.ss7ext:ss7-ext-api:8.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.restcomm.protocols.ss7.sccp:sccp-impl:8.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.restcomm.protocols.ss7.tcap:tcap-api:8.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.mobicents.protocols.asn:asn:2.2.0-143" level="project" />
+    <orderEntry type="library" name="Maven: org.restcomm.protocols.ss7.tcap:tcap-impl:8.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.restcomm.protocols.ss7.map:map-api:8.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.restcomm.protocols.ss7.isup:isup-api:8.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.restcomm.protocols.ss7.map:map-impl:8.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.restcomm.protocols.ss7.isup:isup-impl:8.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-api:1.7.7" level="project" />
+    <orderEntry type="library" name="Maven: org.slf4j:slf4j-simple:1.7.7" level="project" />
+  </component>
+</module>
