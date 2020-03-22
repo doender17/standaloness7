@@ -93,8 +93,8 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
     private void initSCTP(IpChannelType channelType) throws java.io.IOException, java.lang.Exception {
         this.sctpManagement = new ManagementImpl("Client");
         this.sctpManagement.setSingleThread(true);
-        this.sctpManagement.setConnectDelay(10000);
         this.sctpManagement.start();
+        this.sctpManagement.setConnectDelay(10000);
         this.sctpManagement.removeAllResourses();
 
         this.sctpManagement.addServer(SERVER_NAME, SERVER_IP, SERVER_PORT, channelType, null);
@@ -119,7 +119,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
         Asp asp = this.serverM3UAMgmt.assignAspToAs("RAS1", "RASP1");
 
         serverM3UAMgmt.addRoute(CLIENT_SPC, SERVER_SPC, SSN, "RAS1");
-        
+
         logger.debug("Initialized M3UA Stack");
 
     }
