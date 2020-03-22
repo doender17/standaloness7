@@ -176,9 +176,12 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
     private void initiateUSSD() throws MAPException {
 
         // First create Dialog
+        MAPParameterFactory mapParameterFactory = this.mapProvider.getMAPParameterFactory();
+        ISDNAddressString origReference = mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.land_mobile, "26220");
+        ISDNAddressString destReference = mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.land_mobile, "26203");
         MAPDialogSupplementary mapDialog = this.mapProvider.getMAPServiceSupplementary().createNewDialog(
                 MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext,
-                        MAPApplicationContextVersion.version2), SCCP_CLIENT_ADDRESS, null, SCCP_SERVER_ADDRESS, null);
+                        MAPApplicationContextVersion.version2), SCCP_CLIENT_ADDRESS, origReference, SCCP_SERVER_ADDRESS, destReference);
 
         CBSDataCodingSchemeImpl cbsDataCodingScheme = new CBSDataCodingSchemeImpl(0x0f);
 
@@ -367,10 +370,30 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
      * .supplementary.ProcessUnstructuredSSRequest)
      */
     public void onProcessUnstructuredSSRequest(ProcessUnstructuredSSRequest procUnstrReqInd) {
-        // This error condition. Client should never receive the
-        // ProcessUnstructuredSSRequestIndication
-        logger.error(String.format("onProcessUnstructuredSSRequestIndication for Dialog=%d and invokeId=%d",
-                procUnstrReqInd.getMAPDialog().getLocalDialogId(), procUnstrReqInd.getInvokeId()));
+
+        long invokeId = procUnstrReqInd.getInvokeId();
+        
+        CBSDataCodingSchemeImpl cbsDataCodingScheme = new CBSDataCodingSchemeImpl(0x0f);
+
+        MAPDialogSupplementary dialog = procUnstrReqInd.getMAPDialog();
+
+        dialog.setUserObject(invokeId);
+
+        ISDNAddressString msisdn = this.mapProvider.getMAPParameterFactory().createISDNAddressString(
+                AddressNature.international_number, NumberingPlan.ISDN, "31628838002");
+
+        try {
+            USSDString ussdStringObj = this.mapProvider.getMAPParameterFactory().createUSSDString("USSD String : Hello World <CR> 1. Balance <CR> 2. Texts Remaining");
+
+            dialog.addUnstructuredSSRequest(cbsDataCodingScheme, ussdStringObj, null, msisdn);
+
+            dialog.send();
+        }
+        catch (MAPException e)
+        {
+            logger.debug("Error in replying to USSD: " + e.toString());
+        }
+
     }
 
     /*

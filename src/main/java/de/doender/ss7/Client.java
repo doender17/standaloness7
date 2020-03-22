@@ -174,9 +174,12 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
     private void initiateUSSD() throws MAPException {
 
         // First create Dialog
+        MAPParameterFactory mapParameterFactory = this.mapProvider.getMAPParameterFactory();
+        ISDNAddressString origReference = mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.land_mobile, "26220");
+        ISDNAddressString destReference = mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.land_mobile, "26203");
         MAPDialogSupplementary mapDialog = this.mapProvider.getMAPServiceSupplementary().createNewDialog(
                 MAPApplicationContext.getInstance(MAPApplicationContextName.networkUnstructuredSsContext,
-                        MAPApplicationContextVersion.version2), SCCP_CLIENT_ADDRESS, null, SCCP_SERVER_ADDRESS, null);
+                        MAPApplicationContextVersion.version2), SCCP_CLIENT_ADDRESS, origReference, SCCP_SERVER_ADDRESS, destReference);
 
         CBSDataCodingSchemeImpl cbsDataCodingScheme = new CBSDataCodingSchemeImpl(0x0f);
 
