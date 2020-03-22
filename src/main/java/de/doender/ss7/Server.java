@@ -118,7 +118,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
         Asp asp = this.serverM3UAMgmt.assignAspToAs("RAS1", "RASP1");
 
-        serverM3UAMgmt.addRoute(CLIENT_SPC, SERVER_SPC, SSN, "RAS1");
+        serverM3UAMgmt.addRoute(CLIENT_SPC, SERVER_SPC, 3, "RAS1");
 
         logger.debug("Initialized M3UA Stack");
 
