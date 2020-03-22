@@ -13,7 +13,9 @@ import org.restcomm.protocols.ss7.m3ua.ExchangeType;
 import org.restcomm.protocols.ss7.m3ua.Functionality;
 import org.restcomm.protocols.ss7.m3ua.IPSPType;
 import org.restcomm.protocols.ss7.m3ua.impl.M3UAManagementImpl;
+import org.restcomm.protocols.ss7.m3ua.impl.parameter.NetworkAppearanceImpl;
 import org.restcomm.protocols.ss7.m3ua.impl.parameter.ParameterFactoryImpl;
+import org.restcomm.protocols.ss7.m3ua.parameter.NetworkAppearance;
 import org.restcomm.protocols.ss7.m3ua.parameter.RoutingContext;
 import org.restcomm.protocols.ss7.m3ua.parameter.TrafficModeType;
 import org.restcomm.protocols.ss7.map.MAPStackImpl;
@@ -91,8 +93,8 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
     private void initSCTP(IpChannelType channelType) throws java.io.IOException, java.lang.Exception {
         this.sctpManagement = new ManagementImpl("Client");
         this.sctpManagement.setSingleThread(true);
-        this.sctpManagement.setConnectDelay(10000);
         this.sctpManagement.start();
+        this.sctpManagement.setConnectDelay(10000);
         this.sctpManagement.removeAllResourses();
 
         this.sctpManagement.addAssociation(CLIENT_IP, CLIENT_PORT, SERVER_IP, SERVER_PORT, CLIENT_ASSOCIATION_NAME, channelType, null);
@@ -108,13 +110,14 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
         RoutingContext rc = factory.createRoutingContext(new long[] { 1001 });
         TrafficModeType trafficModeType = factory.createTrafficModeType(TrafficModeType.Loadshare);
 
-        this.clientM3UAMgmt.createAs("AS1", Functionality.AS, ExchangeType.SE, IPSPType.CLIENT, rc, trafficModeType, 1, null);
+        this.clientM3UAMgmt.createAs("AS1", Functionality.AS, ExchangeType.SE, IPSPType.CLIENT, rc, trafficModeType, 0, null);
         this.clientM3UAMgmt.createAspFactory("ASP1", CLIENT_ASSOCIATION_NAME);
 
         Asp asp = this.clientM3UAMgmt.assignAspToAs("AS1", "ASP1");
 
-        clientM3UAMgmt.addRoute(SERVER_SPC, CLIENT_SPC, SSN, "AS1");
-        this.clientM3UAMgmt.startAsp("ASP1");
+        clientM3UAMgmt.addRoute(SERVER_SPC, CLIENT_SPC, 3, "AS1", TrafficModeType.Loadshare);
+        //this.clientM3UAMgmt.startAsp("ASP1");
+
         logger.debug("Initialized M3UA Stack");
 
     }
@@ -549,8 +552,13 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 
             // Lets pause for 20 seconds so stacks are initialized properly
             Thread.sleep(10000);
-
-            client.initiateUSSD();
+            client.clientM3UAMgmt.start();
+            client.clientM3UAMgmt.startAsp("ASP1");
+            System.out.println(client.clientM3UAMgmt.getAppServers().get(0).getName());
+            System.out.println(client.clientM3UAMgmt.getAppServers().get(0).isConnected());
+            System.out.println(client.clientM3UAMgmt.getAppServers().get(0).isUp());
+            Thread.sleep(10000);
+            //client.initiateUSSD();
 
         }
         catch (java.lang.Exception ex) {

@@ -11,21 +11,21 @@
     <orderEntry type="inheritedJdk" />
     <orderEntry type="sourceFolder" forTests="false" />
     <orderEntry type="library" scope="TEST" name="Maven: junit:junit:3.8.1" level="project" />
-    <orderEntry type="library" name="Maven: org.mobicents.protocols.sctp:sctp-api:1.0.0.CR3" level="project" />
+    <orderEntry type="library" name="Maven: org.mobicents.protocols.sctp:sctp-impl:2.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: log4j:log4j:1.2.8" level="project" />
-    <orderEntry type="library" name="Maven: org.mobicents.commons:commons:1.0.0.CR1" level="project" />
     <orderEntry type="library" name="Maven: javolution:javolution:5.5.1" level="project" />
-    <orderEntry type="library" name="Maven: org.mobicents.protocols.sctp:sctp-impl:1.0.0.CR3" level="project" />
+    <orderEntry type="library" name="Maven: org.mobicents.protocols.sctp:sctp-api:2.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.testng:testng:6.2" level="project" />
     <orderEntry type="library" name="Maven: org.beanshell:bsh:2.0b4" level="project" />
     <orderEntry type="library" name="Maven: com.beust:jcommander:1.12" level="project" />
     <orderEntry type="library" name="Maven: org.yaml:snakeyaml:1.6" level="project" />
+    <orderEntry type="library" name="Maven: io.netty:netty-all:4.0.33.Final" level="project" />
     <orderEntry type="library" name="Maven: org.restcomm.protocols.ss7.m3ua:m3ua-api:8.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.restcomm.protocols.ss7.mtp:mtp-api:8.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.mobicents.protocols.stream:stream:1.0.0.CR1" level="project" />
-    <orderEntry type="library" name="Maven: io.netty:netty-all:4.0.33.Final" level="project" />
     <orderEntry type="library" name="Maven: org.restcomm.protocols.ss7.statistics:statistics-api:8.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.restcomm.protocols.ss7.m3ua:m3ua-impl:8.0.0-SNAPSHOT" level="project" />
+    <orderEntry type="library" name="Maven: org.mobicents.commons:commons:1.0.0.CR1" level="project" />
     <orderEntry type="library" name="Maven: org.restcomm.protocols.ss7.management:shell-server-api:8.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.restcomm.protocols.ss7.mtp:mtp:8.0.0-SNAPSHOT" level="project" />
     <orderEntry type="library" name="Maven: org.apache.commons:commons-email:1.3.2" level="project" />

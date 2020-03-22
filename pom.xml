@@ -8,7 +8,7 @@
       <name>standaloness7</name>
       <url>http://maven.apache.org</url>
       <properties>
-          <sctp.version>1.0.0.CR3</sctp.version>
+          <sctp.version>2.0.0-SNAPSHOT</sctp.version>
           <jss7.version>8.0.0-SNAPSHOT</jss7.version>
           <slf4j.version>1.7.7</slf4j.version>
           <log4j.version>1.2.17</log4j.version>
@@ -51,12 +51,6 @@
           <artifactId>junit</artifactId>
           <version>3.8.1</version>
           <scope>test</scope>
-        </dependency>
-        <!-- SCTP -->
-        <dependency>
-           <groupId>org.mobicents.protocols.sctp</groupId>
-           <artifactId>sctp-api</artifactId>
-           <version>${sctp.version}</version>
         </dependency>
         <dependency>
             <groupId>org.mobicents.protocols.sctp</groupId>
