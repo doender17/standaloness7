@@ -3,13 +3,18 @@
   <component name="ChangeListManager">
     <list default="true" id="dc78ad8d-bbc0-4577-a426-d87f4c793e16" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/de/doender/ss7/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/de/doender/ss7/Client.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/de/doender/ss7/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/de/doender/ss7/Server.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
     <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
   </component>
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
@@ -33,7 +38,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="run.code.analysis.last.selected.profile" value="pProject Default" />
-    <property name="settings.editor.selected.configurable" value="preferences.lookFeel" />
+    <property name="settings.editor.selected.configurable" value="editor.preferences.tabs" />
   </component>
   <component name="SvnConfiguration">
     <configuration />
@@ -49,6 +54,10 @@
     <servers />
   </component>
   <component name="WindowStateProjectService">
+    <state x="773" y="259" key="#com.intellij.ide.util.MemberChooser" timestamp="1586182471961">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="773" y="259" key="#com.intellij.ide.util.MemberChooser/0.0.1920.1080@0.0.1920.1080" timestamp="1586182471961" />
     <state x="722" y="0" width="476" height="1061" key="#com.intellij.refactoring.rename.AutomaticRenamingDialog" timestamp="1584873862191">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
@@ -57,21 +66,25 @@
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="718" y="410" key="ANALYSIS_DLG_com.intellij.analysis.BaseAnalysisAction$1/0.0.1920.1080@0.0.1920.1080" timestamp="1584874717165" />
-    <state x="454" y="181" key="SettingsEditor" timestamp="1584873495331">
+    <state x="454" y="181" key="SettingsEditor" timestamp="1586172763636">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="454" y="181" key="SettingsEditor/0.0.1920.1080@0.0.1920.1080" timestamp="1584873495331" />
-    <state x="632" y="386" key="com.intellij.ide.util.TipDialog" timestamp="1584877202007">
+    <state x="454" y="181" key="SettingsEditor/0.0.1920.1080@0.0.1920.1080" timestamp="1586172763636" />
+    <state width="498" height="445" key="SwitcherDM" timestamp="1586183834192">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="632" y="386" key="com.intellij.ide.util.TipDialog/0.0.1920.1080@0.0.1920.1080" timestamp="1584877202007" />
+    <state width="498" height="445" key="SwitcherDM/0.0.1920.1080@0.0.1920.1080" timestamp="1586183834192" />
+    <state x="632" y="386" key="com.intellij.ide.util.TipDialog" timestamp="1586181542178">
+      <screen x="0" y="0" width="1920" height="1080" />
+    </state>
+    <state x="632" y="386" key="com.intellij.ide.util.TipDialog/0.0.1920.1080@0.0.1920.1080" timestamp="1586181542178" />
     <state x="624" y="250" key="run.anything.popup" timestamp="1584878441329">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="624" y="250" key="run.anything.popup/0.0.1920.1080@0.0.1920.1080" timestamp="1584878441329" />
-    <state x="623" y="246" width="672" height="678" key="search.everywhere.popup" timestamp="1584876036703">
+    <state x="623" y="246" width="672" height="678" key="search.everywhere.popup" timestamp="1586184288810">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state x="623" y="246" width="672" height="678" key="search.everywhere.popup/0.0.1920.1080@0.0.1920.1080" timestamp="1584876036703" />
+    <state x="623" y="246" width="672" height="678" key="search.everywhere.popup/0.0.1920.1080@0.0.1920.1080" timestamp="1586184288810" />
   </component>
 </project>
