@@ -586,8 +586,6 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
     @Override
     public void onUpdateLocationRequest(UpdateLocationRequest updateLocationRequest) {
         MAPParameterFactory mapParameterFactory = this.mapProvider.getMAPParameterFactory();
-        ISDNAddressString origReference = mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.land_mobile, "26220");
-        ISDNAddressString destReference = mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.land_mobile, "26203");
         MAPServiceMobility mapServiceMobility = this.mapProvider.getMAPServiceMobility();
         mapServiceMobility.acivate();
 

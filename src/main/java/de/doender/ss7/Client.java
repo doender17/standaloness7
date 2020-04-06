@@ -712,12 +712,36 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 
     @Override
     public void onInsertSubscriberDataRequest(InsertSubscriberDataRequest insertSubscriberDataRequest) {
-
+        MAPDialogMobility mapDialog = insertSubscriberDataRequest.getMAPDialog();
+        try {
+            mapDialog.addInsertSubscriberDataResponse(0l, null, null, null, null, null);
+        } catch (MAPException e) {
+            e.printStackTrace();
+        }
+        try {
+            mapDialog.send();
+        } catch (MAPException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
     public void onInsertSubscriberDataResponse(InsertSubscriberDataResponse insertSubscriberDataResponse) {
+        MAPParameterFactory mapParameterFactory = this.mapProvider.getMAPParameterFactory();
+        MAPDialogMobility mapDialog = insertSubscriberDataResponse.getMAPDialog();
 
+        ISDNAddressString hlrAddr = mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "491770020044");
+        try {
+            mapDialog.addUpdateLocationResponse(0l, hlrAddr, null, true, true);
+        } catch (MAPException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            mapDialog.send();
+        } catch (MAPException e) {
+            e.printStackTrace();
+        }
     }
 
     @Override
