@@ -1,5 +1,6 @@
 package de.doender.ss7;
 
+import com.sun.mail.iap.ByteArray;
 import org.apache.log4j.ConsoleAppender;
 import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
@@ -24,6 +25,11 @@ import org.restcomm.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.restcomm.protocols.ss7.map.api.dialog.*;
 import org.restcomm.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.restcomm.protocols.ss7.map.api.primitives.*;
+import org.restcomm.protocols.ss7.map.api.service.mobility.MAPDialogMobility;
+import org.restcomm.protocols.ss7.map.api.service.mobility.MAPServiceMobility;
+import org.restcomm.protocols.ss7.map.api.service.mobility.locationManagement.SupportedLCSCapabilitySets;
+import org.restcomm.protocols.ss7.map.api.service.mobility.locationManagement.VLRCapability;
+import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
 import org.restcomm.protocols.ss7.map.api.service.supplementary.*;
 import org.restcomm.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.restcomm.protocols.ss7.sccp.*;
@@ -166,9 +172,38 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
         this.mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
 
         this.mapProvider.getMAPServiceSupplementary().acivate();
+        this.mapProvider.getMAPServiceMobility().acivate();
 
         this.mapStack.start();
         logger.debug("Initialized MAP Stack ....");
+    }
+
+    private void initiateMAPLU () throws MAPException {
+        MAPParameterFactory mapParameterFactory = this.mapProvider.getMAPParameterFactory();
+        ISDNAddressString origReference = mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.land_mobile, "26220");
+        ISDNAddressString destReference = mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.land_mobile, "26203");
+        MAPServiceMobility mapServiceMobility = this.mapProvider.getMAPServiceMobility();
+        mapServiceMobility.acivate();
+        MAPDialogMobility mapDialog = mapServiceMobility.createNewDialog(
+                MAPApplicationContext.getInstance(MAPApplicationContextName.networkLocUpContext, MAPApplicationContextVersion.version3),
+                SCCP_CLIENT_ADDRESS, origReference, SCCP_SERVER_ADDRESS, destReference);
+
+        IMSI imsi = mapParameterFactory.createIMSI("262034821001512");
+        ISDNAddressString mscNumber = mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "491770810000");
+        ISDNAddressString vlrNumber = mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "491770810001");
+        ISDNAddressString dontknow = mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "491770810003");
+
+        byte[] tmp = { (byte) 1, (byte) 2, (byte) 3, (byte) 4};
+        LMSI lmsi = mapParameterFactory.createLMSI(tmp);
+
+        // phase 1 and phase 2, no 3 and no 4
+        SupportedCamelPhases supCamel = mapParameterFactory.createSupportedCamelPhases(true, true, false, false);
+        // Set 1 and Set 2
+        SupportedLCSCapabilitySets supLCS = mapParameterFactory.createSupportedLCSCapabilitySets(true, true, false, false, false);
+        VLRCapability vcap = mapParameterFactory.createVlrCapability(supCamel, null, false, null, null, false, supLCS, null, null, false, false);
+        mapDialog.addUpdateLocationRequest(imsi, mscNumber, dontknow, vlrNumber, null, null, vcap, false, false, null, null, null, false, false);
+
+        mapDialog.send();
     }
 
     private void initiateUSSD() throws MAPException {
@@ -561,8 +596,8 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
             System.out.println(client.clientM3UAMgmt.getAppServers().get(0).isConnected());
             System.out.println(client.clientM3UAMgmt.getAppServers().get(0).isUp());
             Thread.sleep(20000);
-            client.initiateUSSD();
-
+            //client.initiateUSSD();
+            client.initiateMAPLU();
         }
         catch (java.lang.Exception ex) {
             System.out.println(ex.toString());
