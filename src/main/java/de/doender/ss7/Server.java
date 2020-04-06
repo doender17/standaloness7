@@ -186,6 +186,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
         this.mapProvider.addMAPDialogListener(this);
         this.mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
+        this.mapProvider.getMAPServiceMobility().addMAPServiceListener(this);
 
         this.mapProvider.getMAPServiceSupplementary().acivate();
         this.mapProvider.getMAPServiceMobility().acivate();

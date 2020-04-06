@@ -27,9 +27,22 @@ import org.restcomm.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.restcomm.protocols.ss7.map.api.primitives.*;
 import org.restcomm.protocols.ss7.map.api.service.mobility.MAPDialogMobility;
 import org.restcomm.protocols.ss7.map.api.service.mobility.MAPServiceMobility;
-import org.restcomm.protocols.ss7.map.api.service.mobility.locationManagement.SupportedLCSCapabilitySets;
-import org.restcomm.protocols.ss7.map.api.service.mobility.locationManagement.VLRCapability;
-import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberManagement.SupportedCamelPhases;
+import org.restcomm.protocols.ss7.map.api.service.mobility.MAPServiceMobilityListener;
+import org.restcomm.protocols.ss7.map.api.service.mobility.authentication.AuthenticationFailureReportRequest;
+import org.restcomm.protocols.ss7.map.api.service.mobility.authentication.AuthenticationFailureReportResponse;
+import org.restcomm.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoRequest;
+import org.restcomm.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoResponse;
+import org.restcomm.protocols.ss7.map.api.service.mobility.faultRecovery.ForwardCheckSSIndicationRequest;
+import org.restcomm.protocols.ss7.map.api.service.mobility.faultRecovery.ResetRequest;
+import org.restcomm.protocols.ss7.map.api.service.mobility.faultRecovery.RestoreDataRequest;
+import org.restcomm.protocols.ss7.map.api.service.mobility.faultRecovery.RestoreDataResponse;
+import org.restcomm.protocols.ss7.map.api.service.mobility.imei.CheckImeiRequest;
+import org.restcomm.protocols.ss7.map.api.service.mobility.imei.CheckImeiResponse;
+import org.restcomm.protocols.ss7.map.api.service.mobility.locationManagement.*;
+import org.restcomm.protocols.ss7.map.api.service.mobility.oam.ActivateTraceModeRequest_Mobility;
+import org.restcomm.protocols.ss7.map.api.service.mobility.oam.ActivateTraceModeResponse_Mobility;
+import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberInformation.*;
+import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberManagement.*;
 import org.restcomm.protocols.ss7.map.api.service.supplementary.*;
 import org.restcomm.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.restcomm.protocols.ss7.sccp.*;
@@ -51,7 +64,7 @@ import static org.restcomm.protocols.ss7.indicator.NumberingPlan.ISDN_TELEPHONY;
  * Hello world!
  *
  */
-public class Client implements MAPDialogListener, MAPServiceSupplementaryListener
+public class Client implements MAPDialogListener, MAPServiceSupplementaryListener, MAPServiceMobilityListener
 {
     private static Logger rootLogger = Logger.getRootLogger();
     private static Logger logger = Logger.getLogger(Client.class);
@@ -170,6 +183,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 
         this.mapProvider.addMAPDialogListener(this);
         this.mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
+        this.mapProvider.getMAPServiceMobility().addMAPServiceListener(this);
 
         this.mapProvider.getMAPServiceSupplementary().acivate();
         this.mapProvider.getMAPServiceMobility().acivate();
@@ -575,6 +589,167 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
     }
 
 
+
+    @Override
+    public void onUpdateLocationRequest(UpdateLocationRequest updateLocationRequest) {
+
+    }
+
+    @Override
+    public void onUpdateLocationResponse(UpdateLocationResponse updateLocationResponse) {
+
+    }
+
+    @Override
+    public void onCancelLocationRequest(CancelLocationRequest cancelLocationRequest) {
+
+    }
+
+    @Override
+    public void onCancelLocationResponse(CancelLocationResponse cancelLocationResponse) {
+
+    }
+
+    @Override
+    public void onSendIdentificationRequest(SendIdentificationRequest sendIdentificationRequest) {
+
+    }
+
+    @Override
+    public void onSendIdentificationResponse(SendIdentificationResponse sendIdentificationResponse) {
+
+    }
+
+    @Override
+    public void onUpdateGprsLocationRequest(UpdateGprsLocationRequest updateGprsLocationRequest) {
+
+    }
+
+    @Override
+    public void onUpdateGprsLocationResponse(UpdateGprsLocationResponse updateGprsLocationResponse) {
+
+    }
+
+    @Override
+    public void onPurgeMSRequest(PurgeMSRequest purgeMSRequest) {
+
+    }
+
+    @Override
+    public void onPurgeMSResponse(PurgeMSResponse purgeMSResponse) {
+
+    }
+
+    @Override
+    public void onSendAuthenticationInfoRequest(SendAuthenticationInfoRequest sendAuthenticationInfoRequest) {
+
+    }
+
+    @Override
+    public void onSendAuthenticationInfoResponse(SendAuthenticationInfoResponse sendAuthenticationInfoResponse) {
+
+    }
+
+    @Override
+    public void onAuthenticationFailureReportRequest(AuthenticationFailureReportRequest authenticationFailureReportRequest) {
+
+    }
+
+    @Override
+    public void onAuthenticationFailureReportResponse(AuthenticationFailureReportResponse authenticationFailureReportResponse) {
+
+    }
+
+    @Override
+    public void onResetRequest(ResetRequest resetRequest) {
+
+    }
+
+    @Override
+    public void onForwardCheckSSIndicationRequest(ForwardCheckSSIndicationRequest forwardCheckSSIndicationRequest) {
+
+    }
+
+    @Override
+    public void onRestoreDataRequest(RestoreDataRequest restoreDataRequest) {
+
+    }
+
+    @Override
+    public void onRestoreDataResponse(RestoreDataResponse restoreDataResponse) {
+
+    }
+
+    @Override
+    public void onAnyTimeInterrogationRequest(AnyTimeInterrogationRequest anyTimeInterrogationRequest) {
+
+    }
+
+    @Override
+    public void onAnyTimeInterrogationResponse(AnyTimeInterrogationResponse anyTimeInterrogationResponse) {
+
+    }
+
+    @Override
+    public void onAnyTimeSubscriptionInterrogationRequest(AnyTimeSubscriptionInterrogationRequest anyTimeSubscriptionInterrogationRequest) {
+
+    }
+
+    @Override
+    public void onAnyTimeSubscriptionInterrogationResponse(AnyTimeSubscriptionInterrogationResponse anyTimeSubscriptionInterrogationResponse) {
+
+    }
+
+    @Override
+    public void onProvideSubscriberInfoRequest(ProvideSubscriberInfoRequest provideSubscriberInfoRequest) {
+
+    }
+
+    @Override
+    public void onProvideSubscriberInfoResponse(ProvideSubscriberInfoResponse provideSubscriberInfoResponse) {
+
+    }
+
+    @Override
+    public void onInsertSubscriberDataRequest(InsertSubscriberDataRequest insertSubscriberDataRequest) {
+
+    }
+
+    @Override
+    public void onInsertSubscriberDataResponse(InsertSubscriberDataResponse insertSubscriberDataResponse) {
+
+    }
+
+    @Override
+    public void onDeleteSubscriberDataRequest(DeleteSubscriberDataRequest deleteSubscriberDataRequest) {
+
+    }
+
+    @Override
+    public void onDeleteSubscriberDataResponse(DeleteSubscriberDataResponse deleteSubscriberDataResponse) {
+
+    }
+
+    @Override
+    public void onCheckImeiRequest(CheckImeiRequest checkImeiRequest) {
+
+    }
+
+    @Override
+    public void onCheckImeiResponse(CheckImeiResponse checkImeiResponse) {
+
+    }
+
+    @Override
+    public void onActivateTraceModeRequest_Mobility(ActivateTraceModeRequest_Mobility activateTraceModeRequest_mobility) {
+
+    }
+
+    @Override
+    public void onActivateTraceModeResponse_Mobility(ActivateTraceModeResponse_Mobility activateTraceModeResponse_mobility) {
+
+    }
+
     public static void main( String[] args )
     {
         SimpleLayout layout = new SimpleLayout();
@@ -604,4 +779,5 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
             System.out.println("An exception occurred");
         }
     }
+
 }
