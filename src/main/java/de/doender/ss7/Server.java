@@ -747,7 +747,6 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
         }
 
         try {
-            mapDialog.close(true);
             mapDialog.send();
         } catch (MAPException e) {
             e.printStackTrace();
