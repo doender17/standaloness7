@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.SimpleLayout;
 import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.sctp.ManagementImpl;
+import org.restcomm.protocols.ss7.indicator.NatureOfAddress;
 import org.restcomm.protocols.ss7.indicator.RoutingIndicator;
 
 import org.restcomm.protocols.ss7.m3ua.Asp;
@@ -22,6 +23,24 @@ import org.restcomm.protocols.ss7.map.api.datacoding.CBSDataCodingScheme;
 import org.restcomm.protocols.ss7.map.api.dialog.*;
 import org.restcomm.protocols.ss7.map.api.errors.MAPErrorMessage;
 import org.restcomm.protocols.ss7.map.api.primitives.*;
+import org.restcomm.protocols.ss7.map.api.service.mobility.MAPDialogMobility;
+import org.restcomm.protocols.ss7.map.api.service.mobility.MAPServiceMobility;
+import org.restcomm.protocols.ss7.map.api.service.mobility.MAPServiceMobilityListener;
+import org.restcomm.protocols.ss7.map.api.service.mobility.authentication.AuthenticationFailureReportRequest;
+import org.restcomm.protocols.ss7.map.api.service.mobility.authentication.AuthenticationFailureReportResponse;
+import org.restcomm.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoRequest;
+import org.restcomm.protocols.ss7.map.api.service.mobility.authentication.SendAuthenticationInfoResponse;
+import org.restcomm.protocols.ss7.map.api.service.mobility.faultRecovery.ForwardCheckSSIndicationRequest;
+import org.restcomm.protocols.ss7.map.api.service.mobility.faultRecovery.ResetRequest;
+import org.restcomm.protocols.ss7.map.api.service.mobility.faultRecovery.RestoreDataRequest;
+import org.restcomm.protocols.ss7.map.api.service.mobility.faultRecovery.RestoreDataResponse;
+import org.restcomm.protocols.ss7.map.api.service.mobility.imei.CheckImeiRequest;
+import org.restcomm.protocols.ss7.map.api.service.mobility.imei.CheckImeiResponse;
+import org.restcomm.protocols.ss7.map.api.service.mobility.locationManagement.*;
+import org.restcomm.protocols.ss7.map.api.service.mobility.oam.ActivateTraceModeRequest_Mobility;
+import org.restcomm.protocols.ss7.map.api.service.mobility.oam.ActivateTraceModeResponse_Mobility;
+import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberInformation.*;
+import org.restcomm.protocols.ss7.map.api.service.mobility.subscriberManagement.*;
 import org.restcomm.protocols.ss7.map.api.service.supplementary.*;
 import org.restcomm.protocols.ss7.map.datacoding.CBSDataCodingSchemeImpl;
 import org.restcomm.protocols.ss7.sccp.*;
@@ -29,6 +48,7 @@ import org.restcomm.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.restcomm.protocols.ss7.sccp.impl.parameter.BCDOddEncodingScheme;
 import org.restcomm.protocols.ss7.sccp.impl.parameter.GlobalTitle0011Impl;
 import org.restcomm.protocols.ss7.sccp.impl.parameter.SccpAddressImpl;
+import org.restcomm.protocols.ss7.sccp.parameter.EncodingScheme;
 import org.restcomm.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.restcomm.protocols.ss7.sccp.parameter.GlobalTitle0011;
 import org.restcomm.protocols.ss7.sccp.parameter.SccpAddress;
@@ -37,13 +57,15 @@ import org.restcomm.protocols.ss7.tcap.api.TCAPStack;
 import org.restcomm.protocols.ss7.tcap.asn.ApplicationContextName;
 import org.restcomm.protocols.ss7.tcap.asn.comp.Problem;
 
+import java.util.ArrayList;
+
 import static org.restcomm.protocols.ss7.indicator.NumberingPlan.ISDN_TELEPHONY;
 
 /**
  * Hello world!
  *
  */
-public class Server implements MAPDialogListener, MAPServiceSupplementaryListener
+public class Server implements MAPDialogListener, MAPServiceSupplementaryListener, MAPServiceMobilityListener
 {
     private static Logger rootLogger = Logger.getRootLogger();
     private static Logger logger = Logger.getLogger(Client.class);
@@ -68,7 +90,10 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
     private final int CLIENT_SPC = 500;
     private final int NETWORK_INDICATOR = 2;
     private final int SERVICE_INIDCATOR = 3; // SCCP
-    private final int SSN = 8;
+    // VLR
+    private final int CLIENT_SSN = 7;
+    // HLR
+    private final int SERVER_SSN = 6;
 
     private final String SERVER_IP="192.168.50.18";
     private final int SERVER_PORT=10112;
@@ -76,10 +101,8 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
     private final String SERVER_ASSOCIATION_NAME = "server_association";
     private final int SERVER_SPC = 501;
 
-    private final GlobalTitle0011Impl clientGT = new GlobalTitle0011Impl("49123456789", 0, new BCDOddEncodingScheme(), ISDN_TELEPHONY);
-    private final GlobalTitle0011Impl serverGT = new GlobalTitle0011Impl("49987654321", 0, new BCDOddEncodingScheme(), ISDN_TELEPHONY);
-    private final SccpAddress SCCP_CLIENT_ADDRESS = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, clientGT, CLIENT_SPC, SSN);
-    private final SccpAddress SCCP_SERVER_ADDRESS = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, serverGT, SERVER_SPC, SSN);
+    private SccpAddress SCCP_CLIENT_ADDRESS;
+    private SccpAddress SCCP_SERVER_ADDRESS;
 
     protected void initializeStack(IpChannelType ipchanneltype) throws java.lang.Exception {
         this.initSCTP(ipchanneltype);
@@ -126,7 +149,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
     private void initSCCP() throws java.lang.Exception {
         logger.debug("Initializing SCCP");
-        this.sccpStack = new SccpStackImpl("MapLoadServerSccpStack", null);
+        this.sccpStack = new SccpStackImpl("MapLoadServerSccpStack");
         this.sccpStack.setMtp3UserPart(1, this.serverM3UAMgmt);
 
         logger.debug("Starting stack and removing any resources");
@@ -136,7 +159,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
         logger.debug("Adding Remote SPC");
         this.sccpStack.getSccpResource().addRemoteSpc(0, CLIENT_SPC, 0, 0);
         logger.debug("Adding Remote SSN");
-        this.sccpStack.getSccpResource().addRemoteSsn(0, CLIENT_SPC, SSN, 0, false);
+        this.sccpStack.getSccpResource().addRemoteSsn(0, CLIENT_SPC, CLIENT_SSN, 0, false);
 
         logger.debug("Adding MTP3 SAP");
         // id, mtp3ID, OPC, NI, netID, localGtDigits;
@@ -144,12 +167,53 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
         logger.debug("Adding MTP3 Destination");
         this.sccpStack.getRouter().addMtp3Destination(1, 1, CLIENT_SPC, CLIENT_SPC, 0, 255, 255);
 
+        org.restcomm.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl fact = new org.restcomm.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl();
+        EncodingScheme ec = new BCDOddEncodingScheme();
+        // Server address
+        GlobalTitle serverGT = fact.createGlobalTitle("49987654321", 0, ISDN_TELEPHONY, ec, NatureOfAddress.INTERNATIONAL);
+        SCCP_SERVER_ADDRESS = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, serverGT, 0, 6);
+        // Client address
+        GlobalTitle clientGT = fact.createGlobalTitle("49123456789", 0, ISDN_TELEPHONY, ec, NatureOfAddress.INTERNATIONAL);
+        SCCP_CLIENT_ADDRESS = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, clientGT, 0, 7);
+
+        // SCCP global title translations
+        // Rules consists of a match part and a translate part
+        // First we configure that anything coming in from remote to SSN 6 (HLR) will be accepted and delivered to the local PC
+        // Match part:
+        // Assume we will listen on GT prefix 4998765432, and VLR only
+        GlobalTitle mygt = fact.createGlobalTitle("4998765432*", 0, ISDN_TELEPHONY, ec, NatureOfAddress.INTERNATIONAL);
+        SccpAddress localPattern = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, mygt, 0,6);
+        // Translate part:
+        GlobalTitle gt1 = fact.createGlobalTitle("-", 0, ISDN_TELEPHONY, ec, NatureOfAddress.INTERNATIONAL);
+        SccpAddress localAddress = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt1, SERVER_SPC, 0);
+        // We add this to the router, so we can use it as the primary or secondary Address for the rule
+        sccpStack.getRouter().addRoutingAddress(1, localAddress);
+        // Now we add all this to the router, important is parameter 5 : pattern and parameter 7: primaryAddress (which is the index to the localAddress above)
+        // 1: Rule Number, 2: RuleType, 3: LoadSharingAlgo, 4: Origin, 5: pattern, 6: mask, 7: primaryAddress, 8: secondaryAddress (-1=none),
+        // 9: newCallingPartyAddressId, 10: networkId, 11: callingParty pattern (A-Number based rules)
+        sccpStack.getRouter().addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.REMOTE, localPattern, "K", 1, -1, null, 0, null);
+
+        // Now for the outgoing path
+        // We configure the router to use a default route, send all the Client_SPC, do not touch SSN
+        // Match part:
+        GlobalTitle gt = fact.createGlobalTitle("*", 0, ISDN_TELEPHONY, ec, NatureOfAddress.INTERNATIONAL);
+        SccpAddress pattern = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt, 0,0);
+        // Translate part:
+        GlobalTitle gt2 = fact.createGlobalTitle("-", 0, ISDN_TELEPHONY, ec, NatureOfAddress.INTERNATIONAL);
+        SccpAddress remoteAddress = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt2, CLIENT_SPC, 0);
+        // Note that the routing address here has index 2
+        sccpStack.getRouter().addRoutingAddress(2, remoteAddress);
+        // Add the rule, match pattern and use destination 2 --> SERVER_SPC
+        // 1: Rule Number, 2: RuleType, 3: LoadSharingAlgo, 4: Origin, 5: pattern, 6: mask, 7: primaryAddress, 8: secondaryAddress (-1=none),
+        // 9: newCallingPartyAddressId, 10: networkId, 11: callingParty pattern (A-Number based rules)
+        sccpStack.getRouter().addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K", 2, -1, null, 0, null);
+
         logger.debug("SCCP Stack initialized");
     }
 
     private void initTCAP() throws java.lang.Exception {
         logger.debug("Initializing TCAP Stack ....");
-        this.tcapStack = new TCAPStackImpl("ClientTCAP", this.sccpStack.getSccpProvider(), SSN);
+        this.tcapStack = new TCAPStackImpl("ClientTCAP", this.sccpStack.getSccpProvider(), SERVER_SSN);
         this.tcapStack.start();
 
         this.tcapStack.setDialogIdleTimeout(60000);
@@ -161,13 +225,15 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
     private void initMAP() throws java.lang.Exception {
         logger.debug("Initializing MAP Stack ....");
 
-        this.mapStack = new MAPStackImpl("MapStack", this.sccpStack.getSccpProvider(), SSN);
+        this.mapStack = new MAPStackImpl("MapStack", this.sccpStack.getSccpProvider(), SERVER_SSN);
         this.mapProvider = this.mapStack.getMAPProvider();
 
         this.mapProvider.addMAPDialogListener(this);
         this.mapProvider.getMAPServiceSupplementary().addMAPServiceListener(this);
+        this.mapProvider.getMAPServiceMobility().addMAPServiceListener(this);
 
         this.mapProvider.getMAPServiceSupplementary().acivate();
+        this.mapProvider.getMAPServiceMobility().acivate();
 
         this.mapStack.start();
         logger.debug("Initialized MAP Stack ....");
@@ -561,13 +627,214 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
     }
 
+    @Override
+    public void onUpdateLocationRequest(UpdateLocationRequest updateLocationRequest) {
+        MAPParameterFactory mapParameterFactory = this.mapProvider.getMAPParameterFactory();
+        MAPServiceMobility mapServiceMobility = this.mapProvider.getMAPServiceMobility();
+        mapServiceMobility.acivate();
+
+        MAPDialogMobility mapDialog = updateLocationRequest.getMAPDialog();
+
+        ISDNAddressString msisdn = mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "4915775405009");
+        Category category = mapParameterFactory.createCategory(10);
+        SubscriberStatus subStatus = SubscriberStatus.getInstance(0);
+        ExtTeleserviceCode tsTelephony = mapParameterFactory.createExtTeleserviceCode(TeleserviceCodeValue.telephony);
+        ExtTeleserviceCode tsEmergency = mapParameterFactory.createExtTeleserviceCode(TeleserviceCodeValue.emergencyCalls);
+        ExtTeleserviceCode tsSMSMT = mapParameterFactory.createExtTeleserviceCode(TeleserviceCodeValue.shortMessageMO_PP);
+        ExtTeleserviceCode tsSMSMO = mapParameterFactory.createExtTeleserviceCode(TeleserviceCodeValue.shortMessageMT_PP);
+        ArrayList<ExtTeleserviceCode> teleservices = new ArrayList<>();
+        teleservices.add(tsTelephony); teleservices.add(tsEmergency); teleservices.add(tsSMSMT); teleservices.add(tsSMSMO);
+
+        try {
+            mapDialog.addInsertSubscriberDataRequest(updateLocationRequest.getImsi(), msisdn, category, subStatus, null, teleservices, null, null, false, null, null, null,null);
+        } catch (MAPException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            mapDialog.send();
+        } catch (MAPException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onUpdateLocationResponse(UpdateLocationResponse updateLocationResponse) {
+
+    }
+
+    @Override
+    public void onCancelLocationRequest(CancelLocationRequest cancelLocationRequest) {
+
+    }
+
+    @Override
+    public void onCancelLocationResponse(CancelLocationResponse cancelLocationResponse) {
+
+    }
+
+    @Override
+    public void onSendIdentificationRequest(SendIdentificationRequest sendIdentificationRequest) {
+
+    }
+
+    @Override
+    public void onSendIdentificationResponse(SendIdentificationResponse sendIdentificationResponse) {
+
+    }
+
+    @Override
+    public void onUpdateGprsLocationRequest(UpdateGprsLocationRequest updateGprsLocationRequest) {
+
+    }
+
+    @Override
+    public void onUpdateGprsLocationResponse(UpdateGprsLocationResponse updateGprsLocationResponse) {
+
+    }
+
+    @Override
+    public void onPurgeMSRequest(PurgeMSRequest purgeMSRequest) {
+
+    }
+
+    @Override
+    public void onPurgeMSResponse(PurgeMSResponse purgeMSResponse) {
+
+    }
+
+    @Override
+    public void onSendAuthenticationInfoRequest(SendAuthenticationInfoRequest sendAuthenticationInfoRequest) {
+
+    }
+
+    @Override
+    public void onSendAuthenticationInfoResponse(SendAuthenticationInfoResponse sendAuthenticationInfoResponse) {
+
+    }
+
+    @Override
+    public void onAuthenticationFailureReportRequest(AuthenticationFailureReportRequest authenticationFailureReportRequest) {
+
+    }
+
+    @Override
+    public void onAuthenticationFailureReportResponse(AuthenticationFailureReportResponse authenticationFailureReportResponse) {
+
+    }
+
+    @Override
+    public void onResetRequest(ResetRequest resetRequest) {
+
+    }
+
+    @Override
+    public void onForwardCheckSSIndicationRequest(ForwardCheckSSIndicationRequest forwardCheckSSIndicationRequest) {
+
+    }
+
+    @Override
+    public void onRestoreDataRequest(RestoreDataRequest restoreDataRequest) {
+
+    }
+
+    @Override
+    public void onRestoreDataResponse(RestoreDataResponse restoreDataResponse) {
+
+    }
+
+    @Override
+    public void onAnyTimeInterrogationRequest(AnyTimeInterrogationRequest anyTimeInterrogationRequest) {
+
+    }
+
+    @Override
+    public void onAnyTimeInterrogationResponse(AnyTimeInterrogationResponse anyTimeInterrogationResponse) {
+
+    }
+
+    @Override
+    public void onAnyTimeSubscriptionInterrogationRequest(AnyTimeSubscriptionInterrogationRequest anyTimeSubscriptionInterrogationRequest) {
+
+    }
+
+    @Override
+    public void onAnyTimeSubscriptionInterrogationResponse(AnyTimeSubscriptionInterrogationResponse anyTimeSubscriptionInterrogationResponse) {
+
+    }
+
+    @Override
+    public void onProvideSubscriberInfoRequest(ProvideSubscriberInfoRequest provideSubscriberInfoRequest) {
+
+    }
+
+    @Override
+    public void onProvideSubscriberInfoResponse(ProvideSubscriberInfoResponse provideSubscriberInfoResponse) {
+
+    }
+
+    @Override
+    public void onInsertSubscriberDataRequest(InsertSubscriberDataRequest insertSubscriberDataRequest) {
+
+    }
+
+    @Override
+    public void onInsertSubscriberDataResponse(InsertSubscriberDataResponse insertSubscriberDataResponse) {
+        MAPParameterFactory mapParameterFactory = this.mapProvider.getMAPParameterFactory();
+        MAPDialogMobility mapDialog = insertSubscriberDataResponse.getMAPDialog();
+
+        ISDNAddressString hlrAddr = mapParameterFactory.createISDNAddressString(AddressNature.international_number, NumberingPlan.ISDN, "491770020044");
+        try {
+            mapDialog.addUpdateLocationResponse(0l, hlrAddr, null, true, true);
+        } catch (MAPException e) {
+            e.printStackTrace();
+        }
+
+        try {
+            // if set to false, messages will still be sent.
+            mapDialog.closeDelayed(false);
+        } catch (MAPException e) {
+            e.printStackTrace();
+        }
+    }
+
+    @Override
+    public void onDeleteSubscriberDataRequest(DeleteSubscriberDataRequest deleteSubscriberDataRequest) {
+
+    }
+
+    @Override
+    public void onDeleteSubscriberDataResponse(DeleteSubscriberDataResponse deleteSubscriberDataResponse) {
+
+    }
+
+    @Override
+    public void onCheckImeiRequest(CheckImeiRequest checkImeiRequest) {
+
+    }
+
+    @Override
+    public void onCheckImeiResponse(CheckImeiResponse checkImeiResponse) {
+
+    }
+
+    @Override
+    public void onActivateTraceModeRequest_Mobility(ActivateTraceModeRequest_Mobility activateTraceModeRequest_mobility) {
+
+    }
+
+    @Override
+    public void onActivateTraceModeResponse_Mobility(ActivateTraceModeResponse_Mobility activateTraceModeResponse_mobility) {
+
+    }
+
 
     public static void main( String[] args )
     {
         SimpleLayout layout = new SimpleLayout();
         ConsoleAppender consoleAppender = new ConsoleAppender( layout );
         rootLogger.addAppender( consoleAppender );
-        rootLogger.setLevel(Level.DEBUG);
+        rootLogger.setLevel(Level.TRACE);
         IpChannelType channelType = IpChannelType.SCTP;
 
         final Server server = new Server();
@@ -586,4 +853,6 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
             System.out.println("An exception occurred");
         }
     }
+
+
 }

@@ -10,7 +10,7 @@
       <properties>
           <sctp.version>2.0.0-SNAPSHOT</sctp.version>
           <jss7.version>8.0.0-SNAPSHOT</jss7.version>
-          <slf4j.version>1.7.7</slf4j.version>
+          <slf4j.version>1.7.25</slf4j.version>
           <log4j.version>1.2.17</log4j.version>
       </properties>
         <build>
@@ -116,6 +116,11 @@
               <groupId>org.slf4j</groupId>
               <artifactId>slf4j-simple</artifactId>
               <version>${slf4j.version}</version>
+          </dependency>
+          <dependency>
+              <groupId>log4j</groupId>
+              <artifactId>log4j</artifactId>
+              <version>${log4j.version}</version>
           </dependency>
       </dependencies>
     </project>
