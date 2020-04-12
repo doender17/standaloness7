@@ -2,16 +2,9 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="dc78ad8d-bbc0-4577-a426-d87f4c793e16" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/.idea/jarRepositories.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/libraries/Maven__log4j_log4j_1_2_17.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__log4j_log4j_1_2_8.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_mobicents_protocols_asn_asn_2_2_0_143.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_mobicents_protocols_asn_asn_2_2_0_22.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_api_1_7_7.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_api_1_7_25.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_simple_1_7_7.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/Maven__org_slf4j_slf4j_simple_1_7_25.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/de/doender/ss7/Client.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/de/doender/ss7/Client.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/de/doender/ss7/Server.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/de/doender/ss7/Server.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/standaloness7.iml" beforeDir="false" afterPath="$PROJECT_DIR$/standaloness7.iml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -71,10 +64,10 @@
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
     <state x="454" y="181" key="SettingsEditor/0.0.1920.1080@0.0.1920.1080" timestamp="1586172763636" />
-    <state width="498" height="445" key="SwitcherDM" timestamp="1586704069649">
+    <state width="498" height="445" key="SwitcherDM" timestamp="1586704606162">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>
-    <state width="498" height="445" key="SwitcherDM/0.0.1920.1080@0.0.1920.1080" timestamp="1586704069649" />
+    <state width="498" height="445" key="SwitcherDM/0.0.1920.1080@0.0.1920.1080" timestamp="1586704606162" />
     <state x="632" y="386" key="com.intellij.ide.util.TipDialog" timestamp="1586681528289">
       <screen x="0" y="0" width="1920" height="1080" />
     </state>

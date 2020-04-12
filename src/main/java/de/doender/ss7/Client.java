@@ -96,7 +96,10 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
     private final int CLIENT_SPC = 500;
     private final int NETWORK_INDICATOR = 2;
     private final int SERVICE_INIDCATOR = 3; // SCCP
-    private final int SSN = 8;
+    // VLR
+    private final int CLIENT_SSN = 7;
+    // HLR
+    private final int SERVER_SSN = 6;
 
     private final String SERVER_IP="192.168.50.18";
     private final int SERVER_PORT=10112;
@@ -160,7 +163,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
         logger.debug("Adding Remote SPC");
         this.sccpStack.getSccpResource().addRemoteSpc(0, SERVER_SPC, 0, 0);
         logger.debug("Adding Remote SSN");
-        this.sccpStack.getSccpResource().addRemoteSsn(0, SERVER_SPC, SSN, 0, false);
+        this.sccpStack.getSccpResource().addRemoteSsn(0, SERVER_SPC, SERVER_SSN, 0, false);
 
         logger.debug("Adding MTP3 SAP");
         // id, mtp3ID, OPC, NI, netID, localGtDigits;
@@ -196,7 +199,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 
     private void initTCAP() throws java.lang.Exception {
         logger.debug("Initializing TCAP Stack ....");
-        this.tcapStack = new TCAPStackImpl("ClientTCAP", this.sccpStack.getSccpProvider(), SSN);
+        this.tcapStack = new TCAPStackImpl("ClientTCAP", this.sccpStack.getSccpProvider(), CLIENT_SSN);
         this.tcapStack.start();
 
         this.tcapStack.setDialogIdleTimeout(60000);
@@ -208,7 +211,7 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
     private void initMAP() throws java.lang.Exception {
         logger.debug("Initializing MAP Stack ....");
 
-        this.mapStack = new MAPStackImpl("MapStack", this.tcapStack.getProvider());
+        this.mapStack = new MAPStackImpl("MapStack", this.sccpStack.getSccpProvider(), CLIENT_SSN);
         this.mapProvider = this.mapStack.getMAPProvider();
 
         this.mapProvider.addMAPDialogListener(this);
