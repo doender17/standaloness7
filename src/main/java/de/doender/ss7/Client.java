@@ -173,26 +173,44 @@ public class Client implements MAPDialogListener, MAPServiceSupplementaryListene
 
         org.restcomm.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl fact = new org.restcomm.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl();
         EncodingScheme ec = new BCDOddEncodingScheme();
-        // Server address
+        // Server address, used for addressing in new dialogs
         GlobalTitle serverGT = fact.createGlobalTitle("49987654321", 0, ISDN_TELEPHONY, ec, NatureOfAddress.INTERNATIONAL);
         SCCP_SERVER_ADDRESS = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, serverGT, 0, 6);
-        // Client address
+        // Client address, used for addressing in new dialogs
         GlobalTitle clientGT = fact.createGlobalTitle("49123456789", 0, ISDN_TELEPHONY, ec, NatureOfAddress.INTERNATIONAL);
         SCCP_CLIENT_ADDRESS = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, clientGT, 0, 7);
 
-        GlobalTitle gt1 = fact.createGlobalTitle("-", 0, ISDN_TELEPHONY, ec, NatureOfAddress.INTERNATIONAL);
-        GlobalTitle gt2 = fact.createGlobalTitle("-", 0, ISDN_TELEPHONY, ec, NatureOfAddress.INTERNATIONAL);
-        SccpAddress localAddress = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt1, CLIENT_SPC, 0);
-        sccpStack.getRouter().addRoutingAddress(1, localAddress);
-        SccpAddress remoteAddress = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt2, SERVER_SPC, 0);
-        sccpStack.getRouter().addRoutingAddress(2, remoteAddress);
 
-        GlobalTitle gt = fact.createGlobalTitle("*", 0, ISDN_TELEPHONY, ec, NatureOfAddress.INTERNATIONAL);
-        SccpAddress pattern = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt, 0,0);
+        // SCCP global title translations
+        // Rules consists of a match part and a translate part
+        // First we configure that anything coming in from remote to SSN 7 (VLR) will be accepted and delivered to the local PC
+        // Match part:
+        // Assume we will listen on GT prefix 4912345678, and VLR only
+        GlobalTitle mygt = fact.createGlobalTitle("4912345678*", 0, ISDN_TELEPHONY, ec, NatureOfAddress.INTERNATIONAL);
+        SccpAddress localPattern = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, mygt, 0,7);
+        // Translate part:
+        GlobalTitle gt1 = fact.createGlobalTitle("-", 0, ISDN_TELEPHONY, ec, NatureOfAddress.INTERNATIONAL);
+        SccpAddress localAddress = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt1, CLIENT_SPC, 0);
+        // We add this to the router, so we can use it as the primary or secondary Address for the rule
+        sccpStack.getRouter().addRoutingAddress(1, localAddress);
+        // Now we add all this to the router, important is parameter 5 : pattern and parameter 7: primaryAddress (which is the index to the localAddress above)
         // 1: Rule Number, 2: RuleType, 3: LoadSharingAlgo, 4: Origin, 5: pattern, 6: mask, 7: primaryAddress, 8: secondaryAddress (-1=none),
         // 9: newCallingPartyAddressId, 10: networkId, 11: callingParty pattern (A-Number based rules)
+        sccpStack.getRouter().addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.REMOTE, localPattern, "K", 1, -1, null, 0, null);
 
-        sccpStack.getRouter().addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.REMOTE, pattern, "K", 1, -1, null, 0, null);
+        // Now for the outgoing path
+        // We configure the router to use a default route, send all the SERVER_SPC, do not touch SSN
+        // Match part:
+        GlobalTitle gt = fact.createGlobalTitle("*", 0, ISDN_TELEPHONY, ec, NatureOfAddress.INTERNATIONAL);
+        SccpAddress pattern = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt, 0,0);
+        // Translate part:
+        GlobalTitle gt2 = fact.createGlobalTitle("-", 0, ISDN_TELEPHONY, ec, NatureOfAddress.INTERNATIONAL);
+        SccpAddress remoteAddress = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt2, SERVER_SPC, 0);
+        // Note that the routing address here has index 2
+        sccpStack.getRouter().addRoutingAddress(2, remoteAddress);
+        // Add the rule, match pattern and use destination 2 --> SERVER_SPC
+        // 1: Rule Number, 2: RuleType, 3: LoadSharingAlgo, 4: Origin, 5: pattern, 6: mask, 7: primaryAddress, 8: secondaryAddress (-1=none),
+        // 9: newCallingPartyAddressId, 10: networkId, 11: callingParty pattern (A-Number based rules)
         sccpStack.getRouter().addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K", 2, -1, null, 0, null);
         logger.debug("SCCP Stack initialized");
     }
