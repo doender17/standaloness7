@@ -98,10 +98,8 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
     private final String SERVER_ASSOCIATION_NAME = "server_association";
     private final int SERVER_SPC = 501;
 
-    private final GlobalTitle0011Impl clientGT = new GlobalTitle0011Impl("49123456789", 0, new BCDOddEncodingScheme(), ISDN_TELEPHONY);
-    private final GlobalTitle0011Impl serverGT = new GlobalTitle0011Impl("49987654321", 0, new BCDOddEncodingScheme(), ISDN_TELEPHONY);
-    private final SccpAddress SCCP_CLIENT_ADDRESS = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, clientGT, CLIENT_SPC, SSN);
-    private final SccpAddress SCCP_SERVER_ADDRESS = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_DPC_AND_SSN, serverGT, SERVER_SPC, SSN);
+    private SccpAddress SCCP_CLIENT_ADDRESS;
+    private SccpAddress SCCP_SERVER_ADDRESS;
 
     protected void initializeStack(IpChannelType ipchanneltype) throws java.lang.Exception {
         this.initSCTP(ipchanneltype);
@@ -168,6 +166,13 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
         org.restcomm.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl fact = new org.restcomm.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl();
         EncodingScheme ec = new BCDOddEncodingScheme();
+        // Server address
+        GlobalTitle serverGT = fact.createGlobalTitle("49987654321", 0, ISDN_TELEPHONY, ec, NatureOfAddress.INTERNATIONAL);
+        SCCP_SERVER_ADDRESS = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, serverGT, 0, 6);
+        // Client address
+        GlobalTitle clientGT = fact.createGlobalTitle("49123456789", 0, ISDN_TELEPHONY, ec, NatureOfAddress.INTERNATIONAL);
+        SCCP_CLIENT_ADDRESS = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, clientGT, 0, 7);
+
         GlobalTitle gt1 = fact.createGlobalTitle("-", 0, ISDN_TELEPHONY, ec, NatureOfAddress.INTERNATIONAL);
         GlobalTitle gt2 = fact.createGlobalTitle("-", 0, ISDN_TELEPHONY, ec, NatureOfAddress.INTERNATIONAL);
         SccpAddress localAddress = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt1, SERVER_SPC, 0);
