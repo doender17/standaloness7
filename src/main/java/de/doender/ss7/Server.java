@@ -6,6 +6,7 @@ import org.apache.log4j.Logger;
 import org.apache.log4j.SimpleLayout;
 import org.mobicents.protocols.api.IpChannelType;
 import org.mobicents.protocols.sctp.ManagementImpl;
+import org.restcomm.protocols.ss7.indicator.NatureOfAddress;
 import org.restcomm.protocols.ss7.indicator.RoutingIndicator;
 
 import org.restcomm.protocols.ss7.m3ua.Asp;
@@ -47,6 +48,7 @@ import org.restcomm.protocols.ss7.sccp.impl.SccpStackImpl;
 import org.restcomm.protocols.ss7.sccp.impl.parameter.BCDOddEncodingScheme;
 import org.restcomm.protocols.ss7.sccp.impl.parameter.GlobalTitle0011Impl;
 import org.restcomm.protocols.ss7.sccp.impl.parameter.SccpAddressImpl;
+import org.restcomm.protocols.ss7.sccp.parameter.EncodingScheme;
 import org.restcomm.protocols.ss7.sccp.parameter.GlobalTitle;
 import org.restcomm.protocols.ss7.sccp.parameter.GlobalTitle0011;
 import org.restcomm.protocols.ss7.sccp.parameter.SccpAddress;
@@ -146,7 +148,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
 
     private void initSCCP() throws java.lang.Exception {
         logger.debug("Initializing SCCP");
-        this.sccpStack = new SccpStackImpl("MapLoadServerSccpStack", null);
+        this.sccpStack = new SccpStackImpl("MapLoadServerSccpStack");
         this.sccpStack.setMtp3UserPart(1, this.serverM3UAMgmt);
 
         logger.debug("Starting stack and removing any resources");
@@ -164,6 +166,21 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
         logger.debug("Adding MTP3 Destination");
         this.sccpStack.getRouter().addMtp3Destination(1, 1, CLIENT_SPC, CLIENT_SPC, 0, 255, 255);
 
+        org.restcomm.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl fact = new org.restcomm.protocols.ss7.sccp.impl.parameter.ParameterFactoryImpl();
+        EncodingScheme ec = new BCDOddEncodingScheme();
+        GlobalTitle gt1 = fact.createGlobalTitle("-", 0, ISDN_TELEPHONY, ec, NatureOfAddress.INTERNATIONAL);
+        GlobalTitle gt2 = fact.createGlobalTitle("-", 0, ISDN_TELEPHONY, ec, NatureOfAddress.INTERNATIONAL);
+        SccpAddress localAddress = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt1, SERVER_SPC, 0);
+        sccpStack.getRouter().addRoutingAddress(1, localAddress);
+        SccpAddress remoteAddress = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt2, CLIENT_SPC, 0);
+        sccpStack.getRouter().addRoutingAddress(2, remoteAddress);
+
+        GlobalTitle gt = fact.createGlobalTitle("*", 0, ISDN_TELEPHONY, ec, NatureOfAddress.INTERNATIONAL);
+        SccpAddress pattern = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, gt, 0,0);
+        // 1: Rule Number, 2: RuleType, 3: LoadSharingAlgo, 4: Origin, 5: pattern, 6: mask, 7: primaryAddress, 8: secondaryAddress (-1=none),
+        // 9: newCallingPartyAddressId, 10: networkId, 11: callingParty pattern (A-Number based rules)
+        sccpStack.getRouter().addRule(1, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.REMOTE, pattern, "K", 1, -1, null, 0, pattern);
+        sccpStack.getRouter().addRule(2, RuleType.SOLITARY, LoadSharingAlgorithm.Bit0, OriginationType.LOCAL, pattern, "K", 2, -1, null, 0, pattern);
         logger.debug("SCCP Stack initialized");
     }
 
