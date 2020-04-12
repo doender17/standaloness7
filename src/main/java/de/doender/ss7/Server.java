@@ -812,7 +812,7 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
         SimpleLayout layout = new SimpleLayout();
         ConsoleAppender consoleAppender = new ConsoleAppender( layout );
         rootLogger.addAppender( consoleAppender );
-        rootLogger.setLevel(Level.DEBUG);
+        rootLogger.setLevel(Level.TRACE);
         IpChannelType channelType = IpChannelType.SCTP;
 
         final Server server = new Server();
