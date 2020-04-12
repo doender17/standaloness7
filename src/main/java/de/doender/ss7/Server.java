@@ -180,8 +180,8 @@ public class Server implements MAPDialogListener, MAPServiceSupplementaryListene
         // Rules consists of a match part and a translate part
         // First we configure that anything coming in from remote to SSN 6 (HLR) will be accepted and delivered to the local PC
         // Match part:
-        // Assume we will listen on GT prefix 4912345678, and VLR only
-        GlobalTitle mygt = fact.createGlobalTitle("4912345678*", 0, ISDN_TELEPHONY, ec, NatureOfAddress.INTERNATIONAL);
+        // Assume we will listen on GT prefix 4998765432, and VLR only
+        GlobalTitle mygt = fact.createGlobalTitle("4998765432*", 0, ISDN_TELEPHONY, ec, NatureOfAddress.INTERNATIONAL);
         SccpAddress localPattern = new SccpAddressImpl(RoutingIndicator.ROUTING_BASED_ON_GLOBAL_TITLE, mygt, 0,6);
         // Translate part:
         GlobalTitle gt1 = fact.createGlobalTitle("-", 0, ISDN_TELEPHONY, ec, NatureOfAddress.INTERNATIONAL);
